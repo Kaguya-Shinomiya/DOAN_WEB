@@ -1,0 +1,701 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using System.Security.Claims
+@model DOAN_WEB.ViewModel.CompanyViewModel
+
+@{
+    ViewData["Title"] = "Company";
+}
+
+<div class="sidebar" id="sidebar">
+	<div class="sidebar-inner slimscroll">
+		<div class="sidebar-contents">
+			<div id="sidebar-menu" class="sidebar-menu">
+				<div class="mobile-show">
+					<div class="offcanvas-menu">
+						<div class="user-info align-center bg-theme text-center">
+							<span class="lnr lnr-cross  text-white" id="mobile_btn_close">X</span>
+							<a href="javascript:void(0)" class="d-block menu-style text-white">
+								<div class="user-avatar d-inline-block mr-3">
+									<img src="~/assets/img/profiles/@User.FindFirst(ClaimTypes.Uri).Value" alt="user avatar" class="rounded-circle" width="50">
+								</div>
+							</a>
+						</div>
+					</div>
+					<div class="sidebar-input">
+						<div class="top-nav-search">
+							<form>
+								<input type="text" class="form-control" placeholder="Search here">
+								<button class="btn" type="submit"><i class="fas fa-search"></i></button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<ul>
+					<li>
+						<a href="/dashboard"><img src="~/assets/img/home.svg" alt="sidebar_img"> <span>Dashboard</span></a>
+					</li>
+					<li>
+						<a href="/employees"><img src="~/assets/img/employee.svg" alt="sidebar_img"><span> Employees</span></a>
+					</li>
+					<li class="active">
+						<a href="/company"><img src="~/assets/img/company.svg" alt="sidebar_img"> <span> Company</span></a>
+					</li>
+					<li>
+						<a href="/calendar"><img src="~/assets/img/calendar.svg" alt="sidebar_img"> <span>Calendar</span></a>
+					</li>
+					<li>
+						<a href="/leave"><img src="~/assets/img/leave.svg" alt="sidebar_img"> <span>Leave</span></a>
+					</li>
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+					{
+						<li>
+							<a href="/review"><img src="~/assets/img/review.svg" alt="sidebar_img"><span>Review</span></a>
+						</li>
+					}
+
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 3)
+					{
+						<li>
+							<a href="/report"><img src="~/assets/img/report.svg" alt="sidebar_img"><span>Report</span></a>
+						</li>
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 2)
+					{
+						<li>
+							<a href="/manage"><img src="~/assets/img/manage.svg" alt="sidebar_img"> <span>Manage</span></a>
+						</li>
+					}
+					<li>
+						<a href="settings"><img src="~/assets/img/settings.svg" alt="sidebar_img"><span>Settings</span></a>
+					</li>
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+					{
+						<li>
+							<a href="/profile"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+						</li>
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) >= 4)
+					{
+						<li>
+							<a href="/profile-setting"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+						</li>
+					}
+				</ul>
+				<ul class="logout">
+					<li>
+						<a href="/dang-xuat"><img src="~/assets/img/logout.svg" alt="sidebar_img"><span>Log out</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="page-wrapper">
+	<div class="content container-fluid">
+		<div class="row">
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="breadcrumb-path mb-4">
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item">
+							<a href="dashboard"><img src="~/assets/img/dash.png" class="mr-2" alt="breadcrumb">Home</a>
+						</li>
+						<li class="breadcrumb-item active"> Company</li>
+					</ul>
+					<h3>Company</h3>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="row">
+					@foreach (var company in Model.Company)
+					{
+						<div class="col-xl-8 col-sm-12 col-12 d-flex ">
+							<div class="card card-lists flex-fill">
+								<div class="card-header">
+									<h2 class="card-titles">@company.CompanyName</h2>
+									@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) == 1)
+									{
+										<a class="edit-link" href="#" data-toggle="modal" data-target="#editcompany" data-company-id="@company.Idcompany" onclick="setEditCompany(this)"> <i data-feather="edit"></i></a>
+									}
+								</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="col-xl-6 col-sm-12 col-12 d-flex ">
+											<div class="member-registor flex-fill">
+												<ul>
+													<li>
+														<label>Register Number</label>
+														<span>@company.PostCode</span>
+													</li>
+													<li>
+														<label>Incorporation Date</label>
+														@if(company.IncorporationDate != null)
+														{
+															<span>@company.IncorporationDate.ToString().Substring(0, company.IncorporationDate.ToString().IndexOf(" "))</span>
+														}
+														
+													</li>
+													<li>
+														<label>VAT Number</label>
+														<span>@company.VatNumber</span>
+													</li>
+												</ul>
+											</div>
+										</div>
+										<div class="col-xl-6 col-sm-12 col-12 d-flex">
+											<div class="member-address flex-fill">
+												<label>Address</label>
+												<span>@company.Address1</span>
+											</div>
+										</div>
+									</div>
+									@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) ==1)
+									{
+										<div class="row">
+											<div class="col-xl-12 col-sm-12 col-12 ">
+												<div class="btn-link my-3">
+													<a class="btn btn-new" data-toggle="modal" data-target="#addcompany">Add Company Information</a>
+												</div>
+											</div>
+										</div>
+									}	
+								</div>
+							</div>
+						</div>
+						<div class="col-xl-4 col-sm-12 col-12 d-flex">
+							<div class="card  flex-fill">
+								<div class="card-header">
+									<h2 class="card-titles">@company.CompanyName</h2>
+								</div>
+								<div class="card-body">
+									<div class="row">
+										<div class="col-xl-12 col-sm-12 col-12 ">
+											<div class="member-edits">
+												<ul>
+													<li>
+														<label>@company.CompanyNumber</label>
+														@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) == 1)
+														{
+															<a class="edit-link"> <i data-feather="edit"></i></a>
+														}
+													</li>
+													<li>
+														<label>@company.Email1</label>
+														@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) == 1)
+														{
+															<a class="edit-link"> <i data-feather="edit"></i></a>
+														}
+													</li>
+													<li>
+														<label><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f29a80b2949d9187818697919a9c9d9e9d958bdc919d9f">[email&#160;protected]</a></label>
+														@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) == 1)
+														{
+															<a class="edit-link"> <i data-feather="edit"></i></a>
+														}
+														
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+				<nav aria-label="...">
+					<ul class="pagination pagination-lg">
+						@for (int i = 1; i <= Model.TotalPages; i++)
+						{
+							<li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+								<a class="page-link" href="@Url.Action("Company", new { page = i })">@i</a>
+							</li>
+						}
+					</ul>
+				</nav>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="card card-lists ">
+					<div class="card-header">
+						<h2 class="card-titles">Documents</h2>
+						@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 3)
+						{
+							<a class="btn btn-head" href="#" data-toggle="modal" data-target="#add"> Add Document </a>
+						}
+					</div>
+					<div class="card-body p-0">
+						<div class="table-responsive">
+							<table class="table  custom-table  no-footer">
+								<thead>
+									<tr>
+										<th>Type</th>
+										<th>Name</th>
+										<th>Date</th>
+										<th>Size</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var item in Model.Document)
+									{
+										<tr>
+											<td>
+												<div class="table-img">
+													@if (item.DocType.Equals("PDF"))
+													{
+														<img src="~/assets/img/pdf.png" alt="pdf" />
+													}
+													else
+													{
+														<img src="~/assets/img/word.png" alt="profile">
+													}
+
+												</div>
+											</td>
+											<td>
+												<label>@item.DocName</label>
+											</td>
+											<td><label>@item.DocDate.ToString().Substring(0, item.DocDate.ToString().IndexOf(" "))</label></td>
+											<td>
+												@if (item.DocSize < 1000)
+												{
+													<label>@item.DocSize KB</label>
+												}
+												else if (item.DocSize >= 1000 && item.DocSize < 1000000)
+												{
+													double? tmp = item.DocSize / 1000;
+													<label>@Math.Round(Convert.ToDecimal(tmp), 2) MB</label>
+												}
+												else
+												{
+													double? tmp = item.DocSize / 1000000;
+													<label>@Math.Round(Convert.ToDecimal(tmp), 2) GB</label>
+												}
+											</td>
+											@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+											{
+												<td><label><a class="action_label4" href="#" data-document-id="@item.IdDoc" data-toggle="modal" data-target="#delete" onclick="setConfirmDeleteBtn(this)">Delete <i data-feather="trash-2"></i></a></label></td>
+											}
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="row">
+					<div class="col-xl-6 col-sm-12 col-12 d-flex">
+						<div class="card card-lists flex-fill">
+							<div class="card-header">
+								<h2 class="card-titles">Focus Technologies<span>Head Office</span></h2>
+								<a class="edit-link" data-toggle="modal" data-target="#editoffice"> <i data-feather="edit"></i></a>
+							</div>
+							<div class="card-body d-flex align-items-center">
+								<div class=" member-head employee-image">
+									<h2>Members</h2>
+									<div class="avatar-group">
+										<div class="avatar avatar-xs group_img group_header">
+											<img class="avatar-img rounded-circle" alt="User Image" src="~/assets/img/profiles/avatar-10.jpg">
+										</div>
+										<div class="avatar avatar-xs group_img group_header">
+											<img class="avatar-img rounded-circle" alt="User Image" src="~/assets/img/profiles/avatar-15.jpg">
+										</div>
+										<div class="avatar avatar-xs group_img group_header">
+											<img class="avatar-img rounded-circle" alt="User Image" src="~/assets/img/profiles/avatar-16.jpg">
+										</div>
+										<div class="avatar avatar-xs group_img group_header">
+											<img class="avatar-img rounded-circle" alt="User Image" src="~/assets/img/profiles/avatar-17.jpg">
+										</div>
+										<div class="avatar avatar-xs group_img group_header">
+											<img class="avatar-img rounded-circle" alt="User Image" src="~/assets/img/profiles/avatar-14.jpg">
+										</div>
+										<div class="avatar avatar-xs group_img group_header">
+											<img class="avatar-img rounded-circle" alt="User Image" src="~/assets/img/profiles/avatar-18.jpg">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-6 col-sm-12 col-12  d-flex">
+						<div class="card card-lists flex-fill">
+							<div class="card-header">
+								<h2 class="card-title">Overview </h2>
+								@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+								{
+									<a class="btn btn-head" href="/manage"> Manage Teams </a>
+								}
+							</div>
+							<div class="card-body">
+								<div class="over-view-path">
+									<ul>
+										<li>
+											<label>Teams</label>
+											<span>6</span>
+										</li>
+										<li>
+											<label>People</label>
+											<span>7</span>
+										</li>
+									</ul>
+								</div>
+								<div class="btn-set pl-0">
+									<a class="btn btn-apply" href="/employees">People Directory</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Modal-->
+<!--Add Company-->
+<div class="customize_popup">
+	<div class="modal fade" id="addcompany" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Add Company Information</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-12 p-0">
+						<div class="form-popup">
+							<label>Office Name</label>
+							<input type="text" id="officeName">
+						</div>
+						<div class="form-popup">
+							<label>Registered Company Number</label>
+							<input type="text" id="registeredCompanyNumber">
+						</div>
+						<div class="form-popup">
+							<label>Incorporation Date</label>
+							<input type="date" id="incorporationDate">
+						</div>
+						<div class="form-popup">
+							<label>Vat Number</label>
+							<input type="text" id="vatNumber">
+						</div>
+						<div class="form-popup">
+							<label>Address line 1</label>
+							<input type="text" id="addressLine1">
+						</div>
+						<div class="form-popup">
+							<label>Address line 2</label>
+							<input type="text" id="addressLine2">
+						</div>
+						<div class="form-popup">
+							<label>City</label>
+							<input type="text" id="city">
+						</div>
+						<div class="form-popup">
+							<label>Country</label>
+							<input type="text" id="country">
+						</div>
+						<div class="form-popup">
+							<label>Post - Code</label>
+							<input type="text" id="postCode">
+						</div>
+						<div class="form-popup">
+							<label>Email 1</label>
+							<input type="email" id="email1">
+						</div>
+						<div class="form-popup">
+							<label>Email 2</label>
+							<input type="email" id="email2">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" onclick="addCompany()">Add</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!--Edit Company-->
+
+<div class="customize_popup">
+	<div class="modal fade" id="editcompany" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Edit Company Information</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="col-md-12 p-0">
+						<div class="form-popup">
+							<label>Office Name</label>
+							<input type="text" id="officeName" name="officeName">
+						</div>
+						<div class="form-popup">
+							<label>Registered Company Number</label>
+							<input type="text" id="registeredCompanyNumber" name="registeredCompanyNumber">
+						</div>
+						<div class="form-popup">
+							<label>Incorporation Date</label>
+							<input type="date" id="incorporationDate" name="incorporationDate">
+						</div>
+						<div class="form-popup">
+							<label>Vat Number</label>
+							<input type="text" id="vatNumber" name="vatNumber">
+						</div>
+						<div class="form-popup">
+							<label>Address line 1</label>
+							<input type="text" id="addressLine1" name="addressLine1">
+						</div>
+						<div class="form-popup">
+							<label>Address line 2</label>
+							<input type="text" id="addressLine2" name="addressLine2">
+						</div>
+						<div class="form-popup">
+							<label>City</label>
+							<input type="text" id="city" name="city">
+						</div>
+						<div class="form-popup">
+							<label>Country</label>
+							<input type="text" id="country" name="country">
+						</div>
+						<div class="form-popup">
+							<label>Post - Code</label>
+							<input type="text" id="postCode" name="postCode">
+						</div>
+						<div class="form-popup">
+							<label>Email 1</label>
+							<input type="email" id="email1" name="email1">
+						</div>
+						<div class="form-popup">
+							<label>Email 2</label>
+							<input type="email" id="email2" name="email2">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="confirmEditBtn" data-company-id="" onclick="editCompany(this)">Add</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!--Edit Office-->
+
+<div class="customize_popup">
+	<div class="modal fade" id="editoffice" tabindex="-1" aria-labelledby="staticBackdropLabels" aria-hidden="true">
+		<div class="modal-dialog modal-lg modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabels">Edit Office</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class=" col-md-12 p-0">
+						<div class=" form-popup">
+							<input type="text" placeholder="Office Name">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary">Add</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Add Document-->
+
+<div class="customize_popup">
+	<div class="modal fade" id="add" tabindex="-1" aria-labelledby="staticBackdropLabels1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered ">
+			<div class="modal-content">
+				<div class="modal-header text-centers border-0">
+					<h5 class="modal-title text-center" id="staticBackdropLabels1">Add New Document</h5>
+				</div>
+				<div class="modal-body">
+					<form id="addDocumentForm" enctype="multipart/form-data">
+						<div class="form-group">
+							<label for="documentFile">Select File:</label>
+							<input type="file" class="form-control-file" id="documentFile" name="documentFile">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer text-centers">
+					<button type="button" class="btn btn-primary" onclick="addDocument()">Add</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Delete Document-->
+
+<div class="customize_popup">
+	<div class="modal fade" id="delete" tabindex="-1" aria-labelledby="staticBackdropLabels1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered ">
+			<div class="modal-content">
+				<div class="modal-header text-centers border-0">
+					<h5 class="modal-title text-center" id="staticBackdropLabels1">Are You Sure Want to Delete?</h5>
+				</div>
+				<div class="modal-footer text-centers">
+					<button type="button" class="btn btn-primary" id="confirmDeleteBtn" data-document-id="" onclick="deleteDocument(this)">Delete</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Funcion-->
+
+<script>
+	//Edit Company
+	function setEditCompany(link) {
+		var companyId = link.getAttribute("data-company-id");
+		$('#confirmEditBtn').attr('data-company-id', companyId);
+	}
+
+	function editCompany(link) {
+		var formData = new FormData();
+		var companyId = link.getAttribute("data-company-id");
+
+		// Lấy giá trị từ các input và thêm vào formData
+		formData.append('Idcompany', companyId);
+		formData.append('CompanyNumber', $('input[name="registeredCompanyNumber"]').val());
+		formData.append('IncorporationDate', $('input[name="incorporationDate"]').val());
+		formData.append('VatNumber', $('input[name="vatNumber"]').val());
+		formData.append('Address1', $('input[name="addressLine1"]').val());
+		formData.append('Address2', $('input[name="addressLine2"]').val());
+		formData.append('City', $('input[name="city"]').val());
+		formData.append('Country', $('input[name="country"]').val());
+		formData.append('PostCode', $('input[name="postCode"]').val());
+		formData.append('Email1', $('input[name="email1"]').val());
+		formData.append('Email2', $('input[name="email2"]').val());
+		formData.append('CompanyName', $('input[name="officeName"]').val());
+
+		// Gửi AJAX request với dữ liệu formData
+		$.ajax({
+			url: '/Company/Edit_Company', // Địa chỉ xử lý yêu cầu AJAX
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (result) {
+				$('#editcompany').modal('hide'); // Ẩn modal sau khi chỉnh sửa thành công
+				window.location.reload(); // Tải lại trang sau khi chỉnh sửa thành công
+			},
+			error: function (xhr, status, error) {
+				// Xử lý lỗi nếu có
+			}
+		});
+	}
+
+	//Add Company
+	function addCompany() {
+		var formData = new FormData();
+
+		// Lấy giá trị từ các input và thêm vào formData
+		formData.append('CompanyName', document.getElementById('officeName').value);
+		formData.append('CompanyNumber', document.getElementById('registeredCompanyNumber').value);
+		formData.append('IncorporationDate', document.getElementById('incorporationDate').value);
+		formData.append('VatNumber', document.getElementById('vatNumber').value);
+		formData.append('Address1', document.getElementById('addressLine1').value);
+		formData.append('Address2', document.getElementById('addressLine2').value);
+		formData.append('City', document.getElementById('city').value);
+		formData.append('Country', document.getElementById('country').value);
+		formData.append('PostCode', document.getElementById('postCode').value);
+		formData.append('Email1', document.getElementById('email1').value);
+		formData.append('Email2', document.getElementById('email2').value);
+
+		// Gửi AJAX request với dữ liệu formData
+		$.ajax({
+			url: '/Company/Add_Company', // Địa chỉ xử lý yêu cầu AJAX
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (result) {
+				$('#addcompany').modal('hide'); // Ẩn modal sau khi thêm thành công
+				window.location.reload(); // Tải lại trang sau khi thêm thành công
+				//alert("Thành công");
+			},
+			error: function (xhr, status, error) {
+				// Xử lý lỗi nếu có
+			}
+		});
+	}
+
+
+	//Add Document
+	function addDocument() {
+		var formData = new FormData();
+		var fileInput = document.getElementById('documentFile');
+		formData.append('DocName', fileInput.files[0]); // Thêm tệp vào formData
+
+		$.ajax({
+			url: '/Company/Add_Document', // Địa chỉ xử lý yêu cầu AJAX
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (result) {
+				$('#add').modal('hide'); // Ẩn modal sau khi thêm thành công
+				window.location.reload(); // Tải lại trang sau khi thêm thành công
+			},
+			error: function (xhr, status, error) {
+				// Xử lý lỗi nếu có
+			}
+		});
+	}
+
+	//Delete Document
+	function setConfirmDeleteBtn(link) {
+		var documentId = link.getAttribute("data-document-id");
+		//console.log("ID:", documentId);
+
+		// Gán giá trị documentId cho thuộc tính data-document-id của nút "Delete" trong modal
+		$('#confirmDeleteBtn').attr('data-document-id', documentId);
+	}
+
+	function deleteDocument(link) {
+		// Lấy ID của tài liệu cần xóa từ data-attribute
+		var documentId = link.getAttribute("data-document-id");
+
+		// Gửi yêu cầu xóa thông qua AJAX
+		$.ajax({
+			url: '/Company/Delete_Document/' + documentId, // Thay đổi URL để truyền ID tài liệu cần xóa
+			type: 'POST', // Sử dụng phương thức POST
+			data: { id: documentId }, // Truyền ID tài liệu dưới dạng dữ liệu của yêu cầu
+			success: function (result) {
+				// Nếu xóa thành công, cập nhật giao diện người dùng (ví dụ: xóa hàng trong bảng)
+				$(link).closest('tr').remove(); // Xóa hàng chứa nút delete
+				$('#delete').modal('hide'); // Ẩn modal xác nhận xóa
+				// Thêm mã JavaScript khác tùy thuộc vào cách bạn muốn cập nhật giao diện
+				window.location.reload();
+			},
+			error: function (xhr, status, error) {
+				// Xử lý lỗi nếu cần
+			}
+		});
+	}
+</script>
+

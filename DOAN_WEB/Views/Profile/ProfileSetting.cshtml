@@ -1,0 +1,309 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using System.Security.Claims
+
+@{
+	//ViewData["Title"] = "Edit";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="sidebar" id="sidebar">
+	<div class="sidebar-inner slimscroll">
+		<div class="sidebar-contents">
+			<div id="sidebar-menu" class="sidebar-menu">
+				<div class="mobile-show">
+					<div class="offcanvas-menu">
+						<div class="user-info align-center bg-theme text-center">
+							<span class="lnr lnr-cross  text-white" id="mobile_btn_close">X</span>
+							<a href="javascript:void(0)" class="d-block menu-style text-white">
+								<div class="user-avatar d-inline-block mr-3">
+									<img src="~/assets/img/profiles/@User.FindFirst(ClaimTypes.Uri).Value" alt="user avatar" class="rounded-circle" width="50">
+								</div>
+							</a>
+						</div>
+					</div>
+					<div class="sidebar-input">
+						<div class="top-nav-search">
+							<form>
+								<input type="text" class="form-control" placeholder="Search here">
+								<button class="btn" type="submit"><i class="fas fa-search"></i></button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<ul>
+					<li>
+						<a href="/dashboard"><img src="~/assets/img/home.svg" alt="sidebar_img"> <span>Dashboard</span></a>
+					</li>
+					<li>
+						<a href="/employees"><img src="~/assets/img/employee.svg" alt="sidebar_img"><span> Employees</span></a>
+					</li>
+					@if (User.Identity.IsAuthenticated)
+					{
+						string username = User.Identity.Name;
+						string macv = User.FindFirst(ClaimTypes.Role)?.Value;
+						if (macv != "6")
+						{
+							<li>
+								<a href="/company"><img src="~/assets/img/company.svg" alt="sidebar_img"> <span> Company</span></a>
+							</li>
+							<li>
+								<a href="/calendar"><img src="~/assets/img/calendar.svg" alt="sidebar_img"> <span>Calendar</span></a>
+							</li>
+							<li>
+								<a href="/leave"><img src="~/assets/img/leave.svg" alt="sidebar_img"> <span>Leave</span></a>
+							</li>
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+							{
+								<li>
+									<a href="/review"><img src="~/assets/img/review.svg" alt="sidebar_img"><span>Review</span></a>
+								</li>
+							}
+
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 3)
+							{
+								<li>
+									<a href="/report"><img src="~/assets/img/report.svg" alt="sidebar_img"><span>Report</span></a>
+								</li>
+							}
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 2)
+							{
+								<li>
+									<a href="/manage"><img src="~/assets/img/manage.svg" alt="sidebar_img"> <span>Manage</span></a>
+								</li>
+							}
+							<li>
+								<a href="/settings"><img src="~/assets/img/settings.svg" alt="sidebar_img"><span>Settings</span></a>
+							</li>
+						}
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+					{
+						<li class="active">
+							<a href="/profile"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+						</li>
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) >= 4)
+					{
+						<li class="active">
+							<a href="/profile-setting"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+						</li>
+					}
+				</ul>
+				<ul class="logout">
+					<li>
+						<a href="/dang-xuat"><img src="~/assets/img/logout.svg" alt="sidebar_img"><span>Log out</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="page-wrapper">
+	<div class="content container-fluid">
+		<div class="row">
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="breadcrumb-path mb-4">
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item">
+							<a href="/dashboard"><img src="~/assets/img/dash.png" class="mr-2" alt="breadcrumb">Home</a>
+						</li>
+						<li class="breadcrumb-item active"> Profile</li>
+					</ul>
+					<h3>Profile	</h3>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 mb-4">
+				<div class="head-link-set">
+					<ul>
+						@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+						{
+							<li><a href="/profile">Employement</a></li>
+							<li><a href="/profile-detail">Detail</a></li>
+							<li><a href="/profile-document">Document</a></li>
+							<li><a href="/profile-payroll">Payroll</a></li>
+							<li><a href="/profile-timeoff">Timeoff</a></li>
+							<li><a href="/profile-review">Reviews</a></li>
+						}
+						<li><a class="active" href="#">Settings</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 mb-4">
+				<div class="row">
+					<div class="col-xl-6 col-sm-12 col-12 d-flex">
+						<div class="card flex-fill">
+							<div class="card-header">
+								<h2 class="card-titles">Change Password<span>Your password needs to be at least 8 characters long.</span></h2>
+							</div>
+							<div class="card-body">
+								<form>
+									@Html.AntiForgeryToken()
+									<div class="form-group">
+										<input type="password" placeholder="Current Password " class="form-control" id="pass1" name="pass1">
+									</div>
+									<div class="form-group">
+										<input type="password" class="form-control" id="pass2" name="pass2" placeholder="New Password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất một chữ số, một chữ thường và một chữ hoa." />
+									</div>
+									<div class="form-group">
+										<input type="password" placeholder="Repeat Password" id="pass3" name="pass3" class="form-control" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Mật khẩu phải có ít nhất 8 ký tự, bao gồm ít nhất một chữ số, một chữ thường và một chữ hoa." oninput="checkPasswordMatch(this);" />
+										<div id="passwordMatchMessage"></div>
+									</div>
+									<div class="btn-set pl-0">
+										<button class="btn btn-apply" type="button" onclick="setChangePass()">Change My Password</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 5)
+					{
+						<div class="col-xl-6 col-sm-12 col-12 d-flex">
+						<div class="card flex-fill">
+							<div class="card-header">
+								<h2 class="card-titles">Company Notification Settings<span>You will receive information across the whole company.</span></h2>
+							</div>
+							<div class="card-body">
+								<div class="company-set">
+									<ul>
+										<li>
+											<div class="company-path checkworking">
+												<input type="checkbox" id="che1">
+												<label for="che1">
+													Weekly Summarize
+													<span>Keeping you in the loop with a weekly email summarizing</span>
+												</label>
+											</div>
+										</li>
+										<li>
+											<div class="company-path checkworking">
+												<input type="checkbox" id="che2">
+												<label for="che2">
+													Weekly Payroll Summarize
+													<span>A weekly email containing all changes related to your payroll..</span>
+												</label>
+											</div>
+										</li>
+										<li>
+											<div class="company-path checkworking">
+												<input type="checkbox" id="che3">
+												<label for="che3">
+													Visa Dates
+													<span>Informs and notify the day before Visa dates for each team member.</span>
+												</label>
+											</div>
+										</li>
+									</ul>
+								</div>
+								<div class="btn-set pl-0">
+									<a class="btn btn-apply">Update Notification Settings</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					}
+					
+				</div>
+			</div>
+			@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 5)
+			{
+				<div class="col-xl-12 col-sm-12 col-12 ">
+					<div class="row">
+						<div class="col-xl-12 col-sm-12 col-12 ">
+							<div class="card ">
+								<div class="card-header">
+									<h2 class="card-titles">Team Member Notification Settings<span>You will receive notifications only for Team Leads.</span></h2>
+								</div>
+								<div class="card-body">
+									<div class="company-set">
+										<ul>
+											<li>
+												<div class="company-path checkworking">
+													<input type="checkbox" id="che6">
+													<label for="che6">
+														Birthdays
+														<span>Reasons to party with reminders a week and a day before a team member’s birthday.</span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="company-path checkworking">
+													<input type="checkbox" id="che7">
+													<label for="che7">
+														Work Anniversaries
+														<span>Never miss work anniversaries with reminders the week and the day before.</span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="company-path checkworking">
+													<input type="checkbox" id="che8">
+													<label for="che8">
+														Key Dates
+														<span>Informs and notify the day before key dates for each team member.</span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="company-path checkworking">
+													<input type="checkbox" id="che4">
+													<label for="che4">
+														Off Boardings
+														<span>Informs you when a team member has a leaving date set and reminds you the day before.</span>
+													</label>
+												</div>
+											</li>
+											<li>
+												<div class="company-path checkworking">
+													<input type="checkbox" id="che5">
+													<label for="che5">
+														Work From Home Notifications
+														<span>Never miss a notification that someone will be working from home.</span>
+													</label>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<div class="btn-set pl-0">
+										<a class="btn btn-apply">Update Notification Settings</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+<script>
+	function checkPasswordMatch(input) {
+		var passwordInput = document.getElementById('pass2');
+		var confirmPasswordInput = input;
+		if (passwordInput.value !== confirmPasswordInput.value) {
+			confirmPasswordInput.setCustomValidity('Mật khẩu không khớp');
+		} else {
+			confirmPasswordInput.setCustomValidity('');
+		}
+	}
+
+	function setChangePass(){
+		var newpass = document.getElementById('pass2').value;
+		var oldpass = document.getElementById('pass1').value;
+		var csrfToken = $('input[name="__RequestVerificationToken"]').val(); // Lấy giá trị token CSRF
+		$.ajax({
+			url: '/Profile/Change_Pass/', // URL endpoint để xử lý yêu cầu POST
+			type: 'POST',
+			data: {
+				s: newpass,
+				s1: oldpass,
+				__RequestVerificationToken: csrfToken // Bao gồm token CSRF trong dữ liệu của yêu cầu
+			},
+			success: function (result) {
+				window.location.href = 'dang-xuat';
+			},
+			error: function (xhr, status, error) {
+				// Xử lý lỗi nếu cần
+			}
+		});
+	}
+</script>

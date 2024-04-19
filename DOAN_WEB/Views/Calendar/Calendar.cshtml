@@ -1,0 +1,506 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using System.Security.Claims
+
+
+
+@{
+	ViewData["Title"] = "Edit";
+	//ayout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="sidebar" id="sidebar">
+	<div class="sidebar-inner slimscroll">
+		<div class="sidebar-contents">
+			<div id="sidebar-menu" class="sidebar-menu">
+				<div class="mobile-show">
+					<div class="offcanvas-menu">
+						<div class="user-info align-center bg-theme text-center">
+							<span class="lnr lnr-cross  text-white" id="mobile_btn_close">X</span>
+							<a href="javascript:void(0)" class="d-block menu-style text-white">
+								<div class="user-avatar d-inline-block mr-3">
+									<img src="~/assets/img/profiles/@User.FindFirst(ClaimTypes.Uri).Value" alt="user avatar" class="rounded-circle" width="50">
+								</div>
+							</a>
+						</div>
+					</div>
+					<div class="sidebar-input">
+						<div class="top-nav-search">
+							<form>
+								<input type="text" class="form-control" placeholder="Search here">
+								<button class="btn" type="submit"><i class="fas fa-search"></i></button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<ul>
+					<li>
+						<a href="/dashboard"><img src="~/assets/img/home.svg" alt="sidebar_img"> <span>Dashboard</span></a>
+					</li>
+					<li>
+						<a href="/employees"><img src="~/assets/img/employee.svg" alt="sidebar_img"><span> Employees</span></a>
+					</li>
+					<li>
+						<a href="/company"><img src="~/assets/img/company.svg" alt="sidebar_img"> <span> Company</span></a>
+					</li>
+					<li class="active">
+						<a href="/calendar"><img src="~/assets/img/calendar.svg" alt="sidebar_img"> <span>Calendar</span></a>
+					</li>
+					<li>
+						<a href="/leave"><img src="~/assets/img/leave.svg" alt="sidebar_img"> <span>Leave</span></a>
+					</li>
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+					{
+						<li>
+							<a href="/review"><img src="~/assets/img/review.svg" alt="sidebar_img"><span>Review</span></a>
+						</li>
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 3)
+					{
+						<li>
+							<a href="/report"><img src="~/assets/img/report.svg" alt="sidebar_img"><span>Report</span></a>
+						</li>
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 2)
+					{
+						<li>
+							<a href="/manage"><img src="~/assets/img/manage.svg" alt="sidebar_img"> <span>Manage</span></a>
+						</li>
+					}
+					
+					<li>
+						<a href="/settings"><img src="~/assets/img/settings.svg" alt="sidebar_img"><span>Settings</span></a>
+					</li>
+					<li>
+						<a href="/profile"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+					</li>
+				</ul>
+				<ul class="logout">
+					<li>
+						<a href="/dang-xuat"><img src="~/assets/img/logout.svg" alt="sidebar_img"><span>Log out</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="page-wrapper calendar_page">
+	<div class="content container-fluid">
+
+		<div class="row">
+			<div class="col-xl-12 col-sm-12 col-12  mb-4">
+				<div class="breadcrumb-path">
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item">
+							<a href="/dashboard"><img src="~/assets/img/dash.png" class="mr-2" alt="breadcrumb">Home</a>
+						</li>
+						<li class="breadcrumb-item active"> Calendar</li>
+					</ul>
+					<h3>Calendar</h3>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-3 col-md-4">
+				<div class="card">
+					<div class="card-body">
+						<h2 class="calendar_head">Calendar</h2>
+					</div>
+					<div class="calendar_events">
+						<h4 class="card-title">Drag and drop your event or click in the calendar</h4>
+						<div id="calendar-events" class="mb-3">
+							<div class="calendar-events" data-class="bg-info"><i class="fas fa-square bg-primary"></i> New Theme Release</div>
+							<div class="calendar-events" data-class="bg-success"><i class="fas fa-square bg-success"></i>My Event</div>
+							<div class="calendar-events" data-class="bg-danger"><i class="fas fa-square bg-warning"></i> Meet Manager</div>
+							<div class="calendar-events" data-class="bg-warning"><i class="fas fa-square bg-secondary"></i> Create New theme</div>
+						</div>
+						<div class="checkbox  mb-3">
+							<input id="drop-remove" type="checkbox">
+							<label for="drop-remove">
+								Remove after drop
+							</label>
+						</div>
+						<a href="#" data-toggle="modal" data-target="#add_new_event" class="btn mb-3 btn-primary btn-block">
+							<i class="fas fa-plus"></i> Create New
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-9 col-md-8">
+				<div class="card bg-white">
+					<div class="card-body">
+						<div id="calendar"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!------------------------------------------------------------------------------------------------------------------->
+		<div class="customize_popup">
+			<div class="modal fade" id="add_event" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabelevent" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="staticBackdropLabelevent">Add New Event</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class=" col-md-12 p-0">
+								<div class=" form-popup">
+									<label>Event Name</label>
+									<input type="text" placeholder="Insert Event Name">
+								</div>
+								<div class=" form-popup">
+									<label>Category Color</label>
+									<select name="Danger">
+										<option value="Danger">Danger</option>
+										<option value="Success">Success</option>
+										<option value="Warning">Warning</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-apply">Apply</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!------------------------------------------------------------------------------------------------------------------->
+
+		<div class="customize_popup">
+			<div class="modal fade" id="my_event" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabeladd" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="staticBackdropLabeladd">Add New Event</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class=" col-md-12 p-0">
+								<div class=" form-popup">
+									<label>Event Name</label>
+									<input type="text" placeholder="Insert Event Name">
+								</div>
+								<div class=" form-popup">
+									<label>Event Time</label>
+									<input type="time">
+								</div>
+								<div class=" form-popup">
+									<label>Category Color</label>
+									<select name="Danger">
+										<option value="Danger">Danger</option>
+										<option value="Success">Success</option>
+										<option value="Warning">Warning</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<form>
+								<button type="submit" class="btn btn-primary" name="delete-event" id="delete">Delete</button>
+								<input type="submit" value="Apply" class="btn btn-apply" />
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="customize_popup">
+			<div class="modal fade" id="add_new_event" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="staticBackdropLabel">Add a category</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class=" col-md-12 p-0">
+								<div class=" form-popup">
+									<label>Category Name</label>
+									<input type="text" placeholder="Enter Name">
+								</div>
+								<div class=" form-popup">
+									<label>Choose Category Color</label>
+									<select name="Success">
+										<option value="Success">Success</option>
+										<option value="Cancel">Danger</option>
+										<option value="Cancel">Warning</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-apply">Apply</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	!function ($) {
+		"use strict";
+
+		var CalendarApp = function () {
+			this.$body = $("body");
+			this.$calendar = $('#calendar');
+			this.$event = ('#calendar-events div.calendar-events');
+			this.$categoryForm = $('#add_new_event form');
+			this.$extEvents = $('#calendar-events');
+			this.$modal = $('#my_event');
+			this.$saveCategoryBtn = $('.save-category');
+			this.$calendarObj = null;
+		};
+
+		CalendarApp.prototype.onDrop = function (eventObj, date) {
+			var $this = this;
+			var originalEventObject = eventObj.data('eventObject');
+			var $categoryClass = eventObj.attr('data-class');
+			var copiedEventObject = $.extend({}, originalEventObject);
+			copiedEventObject.start = date;
+			if ($categoryClass)
+				copiedEventObject['className'] = [$categoryClass];
+			$this.$calendar.fullCalendar('renderEvent', copiedEventObject, true);
+			if ($('#drop-remove').is(':checked')) {
+				eventObj.remove();
+			}
+		};
+
+		CalendarApp.prototype.onEventClick = function (calEvent, jsEvent, view) {
+			var $this = this;
+			var form = $("<form></form>");
+			form.append("<label>Change event name</label>");
+			form.append("<div class='input-group'><input class='form-control' type=text value='" + calEvent.title + "' /><span class='input-group-append'><button type='submit' class='btn btn-success' id='update'><i class='fas fa-check'></i> Save</button></span></div>");
+			$this.$modal.modal({ backdrop: 'static' });
+			$this.$modal.find('[name="delete-event"]').show().end().find('.btn.btn-apply').hide().end().find('.save-event').hide().end().find('.modal-body').empty().prepend(form).end().find('.delete-event').unbind('click').click(function () {
+				$this.$calendarObj.fullCalendar('removeEvents', function (ev) {
+					return (ev._id == calEvent._id);
+				});
+				$this.$modal.modal('hide');
+			});
+			/*$this.$modal.find('form').on('submit', function () {
+				calEvent.title = form.find("input[type=text]").val();
+				$this.$calendarObj.fullCalendar('updateEvent', calEvent);
+				$this.$modal.modal('hide');
+				return false;
+			});*/
+			// Xử lý khi nhấn nút "Delete"
+			$this.$modal.find('#delete').unbind('click').click(function () {
+				$this.$calendarObj.fullCalendar('removeEvents', calEvent._id);
+
+				var Id = calEvent._id;
+
+				// Gửi yêu cầu xóa thông qua AJAX
+				$.ajax({
+					url: '/Calendar/Delete_Event/' + Id, // Thay đổi URL để truyền ID tài liệu cần xóa
+					type: 'POST', // Sử dụng phương thức POST
+					data: { id: Id }, // Truyền ID tài liệu dưới dạng dữ liệu của yêu cầu
+					success: function (result) {
+						window.location.reload();
+					},
+					error: function (xhr, status, error) {
+						// Xử lý lỗi nếu cần
+					}
+				});
+
+				$this.$modal.modal('hide');
+				return false;
+			});
+
+			// Xử lý khi nhấn nút "Save"
+			$this.$modal.find('#update').unbind('click').click(function () {
+				calEvent.title = form.find("input[type=text]").val();
+				$this.$calendarObj.fullCalendar('updateEvent', calEvent);
+				var Id = calEvent._id;
+				var formData = new FormData();
+				formData.append('CalName', calEvent.title);
+
+				// Gửi AJAX request với dữ liệu formData
+				$.ajax({
+					url: '/Calendar/Update_Event/' + Id, // Địa chỉ xử lý yêu cầu AJAX
+					type: 'POST',
+					data: formData,
+					contentType: false,
+					processData: false,
+					success: function (result) {
+						window.location.reload(); // Tải lại trang sau khi thêm thành công
+						//alert("Thành công");
+					},
+					error: function (xhr, status, error) {
+						// Xử lý lỗi nếu có
+						window.location.reload();
+						//alert('Error occurred while adding event: ' + error);
+					}
+				});
+				$this.$modal.modal('hide');
+				return false;
+			});
+		};
+
+		CalendarApp.prototype.onSelect = function (start, end, allDay) {
+			var $this = this;
+			$this.$modal.modal({
+				backdrop: 'static'
+			});
+			var form = $("<form></form>");
+			form.append("<div class='event-inputs'></div>");
+			form.find(".event-inputs").append("<div class='form-group'><label class='control-label'>Event Name</label><input class='form-control' placeholder='Insert Event Name' type='text' name='title'/></div>").append("<div class='form-group'><label class='control-label'>Event Time</label><input class='form-control' type='time' name='next_title'/></div>").append("<div class='form-group'><label class='control-label'>Category</label > <select class='form-control' name = 'category' > </select></div > ").find("select[name = 'category']").append(" < option value = 'bg-danger' > Danger < /option>").append("<option value='bg-success'>Success</option > ").append(" < option value = 'bg-purple' > Purple < /option>").append("<option value='bg-primary'>Primary</option > ").append(" < option value = 'bg-info' > Info < /option>").append("<option value='bg-warning'>Warning</option > </div></div > ");
+			$this.$modal.find('#delete').hide().end().find('.save-event').show().end().find('.modal-body').empty().prepend(form).end().find('.save-event').unbind('click').click(function () {
+				form.submit();
+			});
+			$this.$modal.find('form').on('submit', function () {
+				var title = form.find("input[name='title']").val();
+				var next_title = form.find("input[name='next_title']").val();
+				var beginning = form.find("input[name='beginning']").val();
+				var ending = form.find("input[name='ending']").val();
+				var categoryClass = form.find("select[name='category'] option:checked").val();
+				if (title.trim().length > 0) {
+					// Loại bỏ các sự kiện trùng lặp trong khoảng thời gian được chọn
+					$this.$calendarObj.fullCalendar('removeEvents', function (existingEvent) {
+						return existingEvent.start >= start && existingEvent.end <= end;
+					});
+					// Hiển thị sự kiện mới
+					var dateTime = new Date(start);
+					var day = dateTime.getDate();
+					var month = dateTime.getMonth(); // Lưu ý: Tháng trong JavaScript bắt đầu từ 0, nên cần cộng thêm 1
+					var year = dateTime.getFullYear();
+
+					var parts = next_title.split(/[\s/:]+/);
+
+					var hour = parseInt(parts[0]);
+					var minute = parseInt(parts[1]);
+
+					dateTime = new Date(year, month, day, hour, minute, 0);
+					console.log(dateTime);
+
+					$this.$calendarObj.fullCalendar('renderEvent', {
+						title: title,
+						start: dateTime,
+						end: end,
+						allDay: false,
+						className: categoryClass
+					}, true);
+
+					
+					//console.log(dateTime);
+
+					
+					//console.log(dateTime);
+
+					var formData = new FormData();
+					// Lấy giá trị từ các input và thêm vào formData
+					formData.append('CalName', title);
+					formData.append('CalDate', dateTime.toISOString());
+					formData.append('CalType', categoryClass);
+
+					// Gửi AJAX request với dữ liệu formData
+					$.ajax({
+						url: '/Calendar/Add_Event', // Địa chỉ xử lý yêu cầu AJAX
+						type: 'POST',
+						data: formData,
+						contentType: false,
+						processData: false,
+						success: function (result) {
+							window.location.reload(); // Tải lại trang sau khi thêm thành công
+							//alert("Thành công");
+						},
+						error: function (xhr, status, error) {
+							// Xử lý lỗi nếu có
+							window.location.reload();
+							//alert('Error occurred while adding event: ' + error);
+						}
+					});
+
+					// Các xử lý khác sau khi thêm sự kiện
+					//form.find("input[type='text']").val('');
+					//form.find("input[type='time']").val('');
+					//form.find("select[name='category']").val('');
+					$this.$modal.modal('hide');
+				} else {
+					alert('You have to give a title to your event');
+				}
+				return false;
+			});
+			$this.$calendarObj.fullCalendar('unselect');
+		};
+
+
+
+
+		CalendarApp.prototype.enableDrag = function () {
+			$(this.$event).each(function () {
+				var eventObject = { title: $.trim($(this).text()) };
+				$(this).data('eventObject', eventObject);
+				$(this).draggable({ zIndex: 999, revert: true, revertDuration: 0 });
+			});
+		};
+
+		CalendarApp.prototype.init = function () {
+			this.enableDrag();
+			var date = new Date();
+			var d = date.getDate();
+			var m = date.getMonth();
+			var y = date.getFullYear();
+			var form = '';
+			var today = new Date($.now());
+			var defaultEvents = [];
+
+			// Kiểm tra xem chuỗi JSON có dữ liệu hay không
+			//console.log('Html.Raw(ViewBag.DefaultEventsJson)');
+			if ('@Html.Raw(ViewBag.DefaultEventsJson)' !== '') {
+				defaultEvents=JSON.parse('@Html.Raw(ViewBag.DefaultEventsJson)');
+			//	console.log(defaultEvents);
+			}
+			//console.log("A:  "+defaultEvents);
+			var $this = this;
+			$this.$calendarObj = $this.$calendar.fullCalendar({
+				slotDuration: '00:15:00',
+				minTime: '08:00:00',
+				maxTime: '19:00:00',
+				defaultView: 'month',
+				handleWindowResize: true,
+				header: { left: 'prev,next today', center: 'title', right: 'month,agendaWeek,agendaDay' },
+				events: defaultEvents,
+				editable: true,
+				droppable: true,
+				eventLimit: true,
+				selectable: true,
+				drop: function (date) { 
+					$this.onDrop($(this), date); 
+				},
+				select: function (start, end, allDay) { 
+					$this.onSelect(start, end, allDay); 
+				},
+				eventClick: function (calEvent, jsEvent, view) { 
+					$this.onEventClick(calEvent, jsEvent, view); 
+				}
+			});
+			this.$saveCategoryBtn.on('click', function () {
+				var categoryName = $this.$categoryForm.find("input[name='category-name']").val();
+				var categoryColor = $this.$categoryForm.find("select[name='category-color']").val();
+				if (categoryName !== null && categoryName.length != 0) {
+					$this.$extEvents.append('<div class="calendar-events" data-class="bg-' + categoryColor + '" style="position: relative;"><i class="fas fa-circle text-' + categoryColor + '"></i>' + categoryName + '</div>')
+					$this.enableDrag();
+				}
+			});
+		};
+
+		$.CalendarApp = new CalendarApp, $.CalendarApp.Constructor = CalendarApp
+	}(window.jQuery), function ($) {
+		"use strict";
+		$.CalendarApp.init()
+	}(window.jQuery);
+
+</script>

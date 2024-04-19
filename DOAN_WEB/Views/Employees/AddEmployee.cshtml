@@ -1,0 +1,314 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@model DOAN_WEB.ViewModel.EmployeesViewModel
+@using System.Security.Claims
+
+@{
+	//ViewData["Title"] = "Edit";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="sidebar" id="sidebar">
+	<div class="sidebar-inner slimscroll">
+		<div class="sidebar-contents">
+			<div id="sidebar-menu" class="sidebar-menu">
+				<div class="mobile-show">
+					<div class="offcanvas-menu">
+						<div class="user-info align-center bg-theme text-center">
+							<span class="lnr lnr-cross  text-white" id="mobile_btn_close">X</span>
+							<a href="javascript:void(0)" class="d-block menu-style text-white">
+								<div class="user-avatar d-inline-block mr-3">
+									<img src="~/assets/img/profiles/@User.FindFirst(ClaimTypes.Uri).Value" alt="user avatar" class="rounded-circle" width="50">
+								</div>
+							</a>
+						</div>
+					</div>
+					<div class="sidebar-input">
+						<div class="top-nav-search">
+							<form>
+								<input type="text" class="form-control" placeholder="Search here">
+								<button class="btn" type="submit"><i class="fas fa-search"></i></button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<ul>
+					<li>
+						<a href="/dashboard"><img src="~/assets/img/home.svg" alt="sidebar_img"> <span>Dashboard</span></a>
+					</li>
+					<li class="active">
+						<a href="/employees"><img src="~/assets/img/employee.svg" alt="sidebar_img"><span> Employees</span></a>
+					</li>
+					@if (User.Identity.IsAuthenticated)
+					{
+						string username = User.Identity.Name;
+						string macv = User.FindFirst(ClaimTypes.Role)?.Value;
+						if (macv != "6")
+						{
+							<li>
+								<a href="/company"><img src="~/assets/img/company.svg" alt="sidebar_img"> <span> Company</span></a>
+							</li>
+							<li>
+								<a href="/calendar"><img src="~/assets/img/calendar.svg" alt="sidebar_img"> <span>Calendar</span></a>
+							</li>
+							<li>
+								<a href="/leave"><img src="~/assets/img/leave.svg" alt="sidebar_img"> <span>Leave</span></a>
+							</li>
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+							{
+								<li>
+									<a href="/review"><img src="~/assets/img/review.svg" alt="sidebar_img"><span>Review</span></a>
+								</li>
+							}
+
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 3)
+							{
+								<li>
+									<a href="/report"><img src="~/assets/img/report.svg" alt="sidebar_img"><span>Report</span></a>
+								</li>
+							}
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 2)
+							{
+								<li>
+									<a href="/manage"><img src="~/assets/img/manage.svg" alt="sidebar_img"> <span>Manage</span></a>
+								</li>
+							}
+							<li>
+								<a href="/settings"><img src="~/assets/img/settings.svg" alt="sidebar_img"><span>Settings</span></a>
+							</li>
+							if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+							{
+								<li>
+									<a href="/profile"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+								</li>
+							}
+							else
+							{
+								<li>
+									<a href="/profile-setting"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+								</li>
+							}
+						}
+					}
+					<li>
+						<a href="/profile-setting"><img src="~/assets/img/profile.svg" alt="sidebar_img"> <span>Profile</span></a>
+					</li>
+				</ul>
+				<ul class="logout">
+					<li>
+						<a href="/dang-xuat"><img src="~/assets/img/logout.svg" alt="sidebar_img"><span>Log out</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="page-wrapper">
+	<div class="content container-fluid">
+		<div class="row">
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="breadcrumb-path mb-4">
+					<ul class="breadcrumb">
+						<li class="breadcrumb-item">
+							<a href="/dashboard">Home</a>
+						</li>
+						<li class="breadcrumb-item active"> Employees</li>
+					</ul>
+					<h3>Create Employees</h3>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="card">
+					<div class="card-header">
+
+                        <div class="card-body">
+                            <h2 class="card-titles">Basic Details<span>Organized and secure.</span></h2>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="text" placeholder="First Name" id="first_name">
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="text" placeholder="Last Name" id="last_name">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="text" placeholder="Persional Email" id="email">
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="text" placeholder="Phone Number" id="phone_number" class="form-control">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="card ">
+					<div class="card-header">
+						<h2 class="card-titles">Employment Details<span>Let everyone know the essentials so they're fully prepared.</span></h2>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<select class="select" name="country">
+										<option value="Select leave">Country of Employment </option>
+										<option value="Japan">Japan</option>
+										<option value="USA">USA</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="date" placeholder="Date of Birth" id="dof" class="form-control">
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="text" placeholder="Job Title" id="job_title">
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<select class="select" name="job_type">
+										<option value="1">Permanent</option>
+										<option value="0">Freelancer</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<select class="select" name="position">
+										<option value="0">Position</option>
+										@foreach (var item in Model.ChucVu)
+										{
+											<option value="@item.MaCv">@item.TenCv</option>
+										}
+									</select>
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<select class="select" name="company">
+										<option value="0">Company</option>
+										@foreach (var item in Model.Company)
+										{
+											<option value="@item.Idcompany">@item.CompanyName</option>
+										}
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="text" placeholder="Email User" id="emailuser">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-xl-12 col-sm-12 col-12 ">
+				<div class="card">
+					<div class="card-header">
+						<h2 class="card-titles">Salary Details<span>Stored securely, only visible to Super Admins, Payroll Admins, and themselves.</span></h2>
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<select class="select" name="currency">
+										<option value="0">Currency </option>
+										<option value="1000">1000$</option>
+										<option value="2000">2000$</option>
+										<option value="3000">3000$</option>
+										<option value="4000">4000$</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<select class="select" name="frequency">
+										<option value="Select leave">Frequency </option>
+										<option value="Annualy">Annualy</option>
+										<option value="Monthly">Monthly</option>
+										<option value="Weekly">Weekly</option>
+										<option value="Daily">Daily</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-6 col-sm-12 col-12 ">
+								<div class="form-group">
+									<input type="date" placeholder="Start Date" id="start_date" class="form-control">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xl-12 col-sm-12 col-12 ">
+						<div class="form-btn">
+							<a href="/employees" class="btn btn-apply w-auto" onclick="AddMember()">Add Team Member</a>
+							<a href="/employees" class="btn btn-secondary">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+		</div>
+	</div>
+</div>
+
+<script>
+
+	function AddMember() {
+		var formData = new FormData();
+
+		formData.append('UserName', document.getElementById('first_name').value +" " + document.getElementById('last_name').value); // Thêm tệp vào formData
+		formData.append('Address', $("select[name='country']").val());
+		formData.append('StartDay', document.getElementById('start_date').value); // Sửa lại thành formData
+		formData.append('PersionalEmail', document.getElementById('email').value);
+		formData.append('PhoneNuber', document.getElementById('phone_number').value);
+		formData.append('DOF', document.getElementById('dof').value); 
+		formData.append('SalaryCurrent', parseFloat($("select[name='currency']").val().substring(0, 4))); 
+		formData.append('JobType', $("select[name='job_type']").val());
+		formData.append('Frequency', $("select[name='frequency']").val());
+		formData.append('JobTitle', document.getElementById('job_title').value); 
+		formData.append('MaCV', $("select[name='position']").val());
+		formData.append('Idcompany', $("select[name='company']").val()); 
+		formData.append('EmailUser', document.getElementById('emailuser').value);
+		
+		//console.log($("select[name='currency']").val());
+
+		$.ajax({
+			url: '/Employees/AddEmployee', // Địa chỉ xử lý yêu cầu AJAX
+			type: 'POST',
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function (result) {
+				$('#add').modal('hide'); // Ẩn modal sau khi thêm thành công
+				window.location.reload(); // Tải lại trang sau khi thêm thành công
+			},
+			error: function (xhr, status, error) {
+				// Xử lý lỗi nếu có
+			}
+		});
+	}
+</script>
