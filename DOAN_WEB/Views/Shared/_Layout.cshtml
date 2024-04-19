@@ -1,0 +1,256 @@
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+	<title>Quản lý nhân sự</title>
+
+	<link rel="shortcut icon" href="~/assets/img/favicon.png">
+
+	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+
+	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
+	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
+
+	<link rel="stylesheet" href="~/assets/css/bootstrap-datetimepicker.min.css">
+
+	<link rel="stylesheet" href="~/assets/plugins/fullcalendar/fullcalendar.min.css">
+
+	<link rel="stylesheet" href="~/assets/plugins/select2/css/select2.min.css">
+
+	<link rel="stylesheet" href="~/assets/css/style.css">
+
+	<script src="~/assets/js/jquery-3.6.0.min.js"></script>
+
+	<script src="~/assets/js/popper.min.js"></script>
+	<script src="~/assets/js/bootstrap.min.js"></script>
+
+	<script src="~/assets/js/feather.min.js"></script>
+
+	<script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+	<script src="~/assets/plugins/apexchart/apexcharts.min.js"></script>
+	<script src="~/assets/plugins/apexchart/chart-data.js"></script>
+
+	<script src="~/assets/plugins/moment/moment.min.js"></script>
+	<script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+
+	<script src="~/assets/js/jquery-ui.min.js"></script>
+	<script src="~/assets/plugins/fullcalendar/fullcalendar.min.js"></script>
+
+
+	
+</head>
+<body>
+
+	<div class="main-wrapper">
+
+		<div class="header">
+
+			<div class="header-left">
+				<a asp-action="/dashboard" class="logo">
+					<img src="~/assets/img/logo.png" alt="Logo">
+				</a>
+				<a href="/dashboard" class="logo logo-small">
+					<img src="~/assets/img/logo-small.png" alt="Logo" width="30" height="30">
+				</a>
+				<a href="javascript:void(0);" id="toggle_btn">
+					<span class="bar-icon">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+				</a>
+			</div>
+
+
+
+
+			<div class="top-nav-search">
+				<form>
+					<input type="text" class="form-control" placeholder="">
+					<button class="btn" type="submit"><i class="fas fa-search"></i></button>
+				</form>
+			</div>
+
+
+			<a class="mobile_btn" id="mobile_btn">
+				<i class="fas fa-bars"></i>
+			</a>
+
+
+			<ul class="nav user-menu">
+
+				<li class="nav-item dropdown">
+					<a href="#" class="dropdown-toggle nav-link pr-0" data-toggle="dropdown">
+						<i data-feather="bell"></i> <span class="badge badge-pill"></span>
+					</a>
+					<div class="dropdown-menu notifications">
+						<div class="topnav-dropdown-header">
+							<span class="notification-title">Notifications</span>
+							<a href="javascript:void(0)" class="clear-noti"> Clear All</a>
+						</div>
+						<div class="noti-content">
+							<ul class="notification-list">
+								<li class="notification-message">
+									<a href="/activities">
+										<div class="media">
+											<span class="avatar avatar-sm">
+												<img class="avatar-img rounded-circle" alt="" src="~/assets/img/profiles/avatar-02.jpg">
+											</span>
+											<div class="media-body">
+												<p class="noti-details"><span class="noti-title">Brian Johnson</span> paid the invoice <span class="noti-title">#DF65485</span></p>
+												<p class="noti-time"><span class="notification-time">4 mins ago</span></p>
+											</div>
+										</div>
+									</a>
+								</li>
+								<li class="notification-message">
+									<a href="/activities">
+										<div class="media">
+											<span class="avatar avatar-sm">
+												<img class="avatar-img rounded-circle" alt="" src="~/assets/img/profiles/avatar-03.jpg">
+											</span>
+											<div class="media-body">
+												<p class="noti-details"><span class="noti-title">Marie Canales</span> has accepted your estimate <span class="noti-title">#GTR458789</span></p>
+												<p class="noti-time"><span class="notification-time">6 mins ago</span></p>
+											</div>
+										</div>
+									</a>
+								</li>
+								<li class="notification-message">
+									<a href="/activities">
+										<div class="media">
+											<div class="avatar avatar-sm">
+												<span class="avatar-title rounded-circle bg-primary-light"><i class="far fa-user"></i></span>
+											</div>
+											<div class="media-body">
+												<p class="noti-details"><span class="noti-title">New user registered</span></p>
+												<p class="noti-time"><span class="notification-time">8 mins ago</span></p>
+											</div>
+										</div>
+									</a>
+								</li>
+								<li class="notification-message">
+									<a href="/activities">
+										<div class="media">
+											<span class="avatar avatar-sm">
+												<img class="avatar-img rounded-circle" alt="" src="~/assets/img/profiles/avatar-04.jpg">
+											</span>
+											<div class="media-body">
+												<p class="noti-details"><span class="noti-title">Barbara Moore</span> declined the invoice <span class="noti-title">#RDW026896</span></p>
+												<p class="noti-time"><span class="notification-time">12 mins ago</span></p>
+											</div>
+										</div>
+									</a>
+								</li>
+								<li class="notification-message">
+									<a href="/activities">
+										<div class="media">
+											<div class="avatar avatar-sm">
+												<span class="avatar-title rounded-circle bg-info-light"><i class="far fa-comment"></i></span>
+											</div>
+											<div class="media-body">
+												<p class="noti-details"><span class="noti-title">You have received a new message</span></p>
+												<p class="noti-time"><span class="notification-time">2 days ago</span></p>
+											</div>
+										</div>
+									</a>
+								</li>
+							</ul>
+						</div>
+						<div class="topnav-dropdown-footer">
+							<a href="/activities">View all Notifications</a>
+						</div>
+					</div>
+				</li>
+
+
+				<li class="nav-item dropdown has-arrow main-drop">
+					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+						<span class="user-img">
+							@if (User.Identity.IsAuthenticated)
+							{
+								string username = User.Identity.Name;
+								string macv = User.FindFirst(ClaimTypes.Role)?.Value;
+								<img src="~/assets/img/profiles/@User.FindFirst(ClaimTypes.Uri).Value" alt="">
+							}
+
+							<span class="status online"></span>
+						</span>
+						<span>@User.FindFirst(ClaimTypes.Name).Value</span>
+					</a>
+					<div class="dropdown-menu">
+						@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 4)
+						{
+							<a class="dropdown-item" href="/profile"><i data-feather="user" class="mr-1"></i> Profile</a>
+						}
+						else
+						{
+							<a class="dropdown-item" href="/profile-setting"><i data-feather="user" class="mr-1"></i> Profile</a>
+						}
+
+						@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 5)
+						{
+							<a class="dropdown-item" href="/settings"><i data-feather="settings" class="mr-1"></i> Settings</a>
+						}
+						<a class="dropdown-item" href="/dang-xuat"><i data-feather="log-out" class="mr-1"></i> Logout</a>
+					</div>
+				</li>
+
+			</ul>
+			<div class="dropdown mobile-user-menu show">
+				<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+				<div class="dropdown-menu dropdown-menu-right ">
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 5)
+					{
+						<a class="dropdown-item" href="/profile">My Profile</a>
+					}
+					else
+					{
+						<a class="dropdown-item" href="/profile-setting">My Profile</a>
+					}
+					@if (Int64.Parse(User.FindFirst(ClaimTypes.Role)?.Value) < 5)
+					{
+						<a class="dropdown-item" href="/settings">Settings</a>
+					}
+					<a class="dropdown-item" href="/dang-xuat">Logout</a>
+				</div>
+			</div>
+
+		</div>
+
+
+		@RenderBody()
+
+	</div>
+
+
+
+	@*<script src="~/assets/js/popper.min.js"></script>
+	<script src="~/assets/js/bootstrap.min.js"></script>
+
+	<script src="~/assets/js/feather.min.js"></script>
+
+	<script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+	<script src="~/assets/plugins/apexchart/apexcharts.min.js"></script>
+	<script src="~/assets/plugins/apexchart/chart-data.js"></script>
+
+	<script src="~/assets/js/script.js"></script>
+	<script src="~/assets/plugins/moment/moment.min.js"></script>
+	<script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+	<script src="~/assets/js/jquery-ui.min.js"></script>*@
+
+	
+	<script src="~/assets/js/script.js"></script>
+
+	<script src="~/assets/plugins/select2/js/select2.min.js"></script>
+
+	<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@*model 
+
+
+ViewModel.HomeViewModel*@
+@model DOAN_WEB.ViewModel.UserViewModel
+
+@{
+	//ViewData["Title"] = "Edit";
+	Layout = "~/Views/Shared/_LayoutBegin.cshtml";
+}
+
+<h1>Login</h1>
+<p class="account-subtitle">Access to our dashboard</p>
+<form class="form form-horizontal" asp-action="Login" asp-controller="User" method="POST">
+	@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+	{
+		<div class="alert alert-danger" role="alert">
+			@ViewBag.ErrorMessage
+		</div>
+	}
+	<div class="form-group">
+		<label class="form-control-label">Email Address</label>
+		@*<input type="email" class="form-control">*@
+		<input class="form-control" asp-for="Register.EmailUser" placeholder="Nhập email" autofocus required type="email"/>
+		<span asp-validation-for="Register.EmailUser" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label class="form-control-label">Password</label>
+		@*<div class="pass-group">
+			<input type="password" class="form-control pass-input">
+			<span class="fas fa-eye toggle-password"></span>
+		</div>*@
+		<input type="password" class="form-control" asp-for="Register.PasswordUser" id="password" placeholder="Nhập mật khẩu" required />
+		<span asp-validation-for="Register.PasswordUser" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<div class="row">
+			<div class="col-6">
+				<div class="custom-control custom-checkbox">
+					<input type="checkbox" class="custom-control-input" id="cb1">
+					<label class="custom-control-label" for="cb1">Remember me</label>
+				</div>
+			</div>
+			<div class="col-6 text-right">
+				<a class="forgot-link" asp-action="ForgotPassword">Forgot Password ?</a>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<button name="submit" class="btn btn-lg btn-block btn-primary" type="submit">Login</button>
+	</div>
+	<div class="login-or">
+		<span class="or-line"></span>
+		<span class="span-or">or</span>
+	</div>
+
+	<div class="social-login mb-3">
+		<span>Login with</span>
+		<a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a><a href="#" class="google"><i class="fab fa-google"></i></a>
+	</div>
+
+	<div class="text-center dont-have">Don't have an account yet? <a asp-action="Register">Register</a></div>
+</form>
